@@ -1,0 +1,53 @@
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-6.7
+  - name: centos-7.1
+  - name: debian-7.8
+    run_list: apt::default
+  - name: debian-8.1
+    run_list: apt::default
+  - name: fedora-21
+  - name: ubuntu-12.04
+    run_list: apt::default
+  - name: ubuntu-14.04
+    run_list: apt::default
+  - name: omnios-r151014
+    driver:
+      box: omnios-r151014
+      box_url: http://omnios.omniti.com/media/omnios-r151014.box
+    run_list:
+    - recipe[fake::omnios]
+
+suites:
+- name: default
+  run_list:
+  - recipe[postfix]
+
+- name: aliases
+  run_list:
+  - recipe[postfix::aliases]
+
+- name: client
+  run_list:
+  - recipe[postfix::client]
+
+- name: server
+  run_list:
+  - recipe[postfix::server]
+
+- name: sasl_auth
+  run_list:
+  - recipe[postfix::sasl_auth]
+  attributes:
+    postfix:
+      main:
+        relayhost: "localhost"
+        smtp_sasl_auth_enable: "yes"
+      sasl:
+        smtp_sasl_user_name: "kitchenuser"
+        smtp_sasl_passwd: "not-a-real-thing"
